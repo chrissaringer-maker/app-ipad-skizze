@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Skizze Test">
+<meta name="theme-color" content="#F3F5F8">
+<meta name="robots" content="noindex, nofollow">
+<title>Skizze – Gerätetest (Stufe 0)</title>
+<!-- Probeseite für den Gerätetest am iPad. Enthält keine Unterlagen, sendet nichts, lädt nichts nach. Fassung V01, 20.11.2026. -->
+<style>
+:root { --dunkel:#1B2A41; --akzent:#1F5A96; --grau:#4B5563; --linie:#B8C0CC; --hell:#E9EEF5; --flaeche:#F3F5F8; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; font: 15px/1.4 "Segoe UI", -apple-system, Helvetica, Arial, sans-serif; color: #1C2433; background: var(--flaeche);
+       padding: env(safe-area-inset-top) env(safe-area-inset-right) 40px env(safe-area-inset-left); -webkit-user-select: none; user-select: none; }
+header { background: var(--hell); border-bottom: 1px solid var(--linie); padding: 10px 16px; position: sticky; top: 0; z-index: 5; display: flex; gap: 12px; align-items: center; }
+header h1 { font-size: 17px; margin: 0; color: var(--dunkel); flex: 1; }
+header .stand { font: 12px Consolas, Menlo, monospace; color: var(--grau); }
+main { max-width: 1180px; margin: 0 auto; padding: 12px 16px; }
+.karte { background: #fff; border: 1px solid var(--linie); border-top: 2px solid var(--akzent); margin: 0 0 14px; padding: 10px 14px 12px; }
+.karte h2 { font-size: 15px; margin: 0 0 4px; color: var(--dunkel); }
+.karte p { margin: 0 0 8px; color: var(--grau); }
+button { font: inherit; color: var(--dunkel); background: var(--flaeche); border: 1px solid var(--linie); border-radius: 4px; padding: 7px 12px; margin: 0 6px 6px 0; }
+button.haupt { background: var(--akzent); color: #fff; border-color: var(--akzent); font-weight: 600; }
+button:active { background: var(--hell); }
+.erg { font: 12.5px/1.45 Consolas, Menlo, monospace; white-space: pre-wrap; background: #F7F8FA; border: 1px solid #D5DBE3; padding: 6px 8px; min-height: 30px; color: #1C2433; -webkit-user-select: text; user-select: text; }
+.ok { color: #1F7A3A; font-weight: 600; } .nein { color: #C0392B; font-weight: 600; }
+canvas { display: block; background: #fff; border: 1px solid var(--linie); touch-action: none; width: 100%; }
+.zeile { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.leiste { display: flex; flex-direction: column; gap: 3px; padding: 4px; border: 1px solid var(--linie); background: #fff; }
+.leiste button { margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; border-radius: 2px; background: #fff; }
+.leiste button svg { display: block; }
+.leiste button span { font-size: 9px; line-height: 1; color: var(--dunkel); }
+.leiste button.ziel { border: 2px solid var(--akzent); }
+.frage { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 6px 0 0; }
+.frage button.gew { background: var(--akzent); color: #fff; border-color: var(--akzent); }
+textarea { width: 100%; height: 220px; font: 12px Consolas, Menlo, monospace; border: 1px solid var(--linie); -webkit-user-select: text; user-select: text; }
+</style>
+</head>
+<body>
+<header><h1>Skizze – Gerätetest (Stufe 0)</h1><span class="stand" id="kopfstand">V01</span></header>
+<main>
+
+<div class="karte"><h2>So geht es</h2>
+<p>Diese Seite prüft, was dein iPad kann. Sie enthält keine Unterlagen und schickt nichts weg. Geh die Karten von oben nach unten durch. Ganz unten steht das Ergebnis als Text – davon bitte ein Bildschirmfoto oder den Text in die Sitzung schicken. Am besten zweimal: einmal in Safari, einmal als App vom Home-Bildschirm.</p></div>
+
+<div class="karte"><h2>1 · Gerät</h2><p>Läuft von selbst.</p><div class="erg" id="e1">…</div></div>
+
+<div class="karte"><h2>2 · Stift</h2><p>Zeichne mit dem Stift ein paar Linien: leicht, fest, schnell, langsam. Leg dabei die Hand aufs Glas.</p>
+<canvas id="c2" height="260"></canvas><div class="erg" id="e2">noch nichts gezeichnet</div>
+<button id="b2">Fläche leeren</button></div>
+
+<div class="karte"><h2>3 · Zoom und großes Bild</h2><p>Lädt ein Testbild in der Größe A3 mit 300 dpi und misst, wie schnell das iPad es bei jeder Vergrößerung zeichnet. Danach kannst du mit zwei Fingern zoomen und mit einem Finger schieben.</p>
+<button class="haupt" id="b3">Messung starten</button><span id="z3" class="stand" style="font:12px Consolas,monospace;color:#4B5563"></span>
+<canvas id="c3" height="360"></canvas><div class="erg" id="e3">…</div>
+<div class="frage" data-f="zoom_scharf">Sind die feinen Linien bei 6400 % scharf? <button>ja</button><button>nein</button></div></div>
+
+<div class="karte"><h2>4 · Viele Striche</h2><p>Zeichnet zur Probe 1 000 und 5 000 Striche auf einmal neu.</p>
+<button class="haupt" id="b4">Messung starten</button><div class="erg" id="e4">…</div></div>
+
+<div class="karte"><h2>5 · Zwischenablage</h2><p>Erst „Text kopieren“. Dann in Safari ein Bildschirmfoto machen, zuschneiden, „Kopieren“, hierher zurück und „Bild einfügen“ antippen.</p>
+<button class="haupt" id="b5a">Text kopieren (3 Größen)</button><button class="haupt" id="b5b">Bild einfügen</button>
+<canvas id="c5" height="160" style="max-width:420px"></canvas><div class="erg" id="e5">…</div></div>
+
+<div class="karte"><h2>6 · Kurzbefehl starten</h2><p>Prüft, ob diese Seite die App „Kurzbefehle“ öffnen darf. Am besten vorher einen Kurzbefehl mit dem Namen <b>Skizze Test</b> anlegen (Anleitung kommt in der Sitzung). Auch ohne ihn zeigt der Test, ob sich „Kurzbefehle“ öffnet.</p>
+<button class="haupt" id="b6a">mit kurzem Text</button><button class="haupt" id="b6b">mit Zwischenablage (100 KB)</button><button class="haupt" id="b6c">mit Zwischenablage (1 MB)</button>
+<div class="erg" id="e6">…</div>
+<div class="frage" data-f="kurzbefehl_oeffnet">Hat sich „Kurzbefehle“ geöffnet? <button>ja</button><button>nein</button><button>mit Rückfrage</button></div>
+<div class="frage" data-f="kurzbefehl_text">Kam der Text im Kurzbefehl an? <button>ja</button><button>nein</button><button>nicht geprüft</button></div></div>
+
+<div class="karte"><h2>7 · Speicher und App-Wechsel</h2><p>Zeichne oben bei Karte 2 etwas. Wechsle dann zu Safari, öffne dort zwei, drei Seiten und komm zurück. Die Seite zählt mit, ob sie neu geladen wurde und ob die Zeichnung noch da ist.</p>
+<button class="haupt" id="b7">20 MB Speicherprobe</button><div class="erg" id="e7">…</div></div>
+
+<div class="karte"><h2>8 · Kleine Felder und erkennbare Zeichen</h2><p>Drei Leisten mit Feldern von 7, 6 und 5 mm. Tippe mit dem Stift jeweils das Feld an, das oben genannt wird. Danach bitte sagen, welche Größe dir liegt und ob die Zeichen mit Wort erkennbar sind.</p>
+<div class="erg" id="e8a" style="font-size:16px;min-height:0;margin-bottom:8px">Zum Start eine der Leisten antippen.</div>
+<div class="zeile" id="leisten"></div><div class="erg" id="e8">…</div>
+<div class="frage" data-f="feldgroesse">Welche Größe passt? <button>7 mm</button><button>6 mm</button><button>5 mm</button></div>
+<div class="frage" data-f="zeichen_erkennbar">Zeichen mit Wort erkennbar? <button>ja</button><button>teils</button><button>nein</button></div></div>
+
+<div class="karte"><h2>9 · Start ohne Netz</h2><p>Nur als App vom Home-Bildschirm: Flugmodus einschalten, App ganz schließen, wieder öffnen.</p>
+<div class="erg" id="e9">…</div>
+<div class="frage" data-f="offline_start">Startet die App im Flugmodus? <button>ja</button><button>nein</button><button>nicht geprüft</button></div></div>
+
+<div class="karte"><h2>Ergebnis</h2><p>Bitte als Bildschirmfoto oder als Text in die Sitzung schicken.</p>
+<button class="haupt" id="bk">Ergebnis kopieren</button><button id="bt">Ergebnis teilen …</button><span id="ek"></span>
+<textarea id="aus" readonly></textarea></div>
+
+</main>
+<script>
+"use strict";
+const FASSUNG = "Stufe 0 · V02 · 20.11.2026";
+const E = {};                                   // gesammeltes Ergebnis
+const $ = (id) => document.getElementById(id);
+const PX_MM = 5.2;                              // iPad Pro 12,9″: 264 Bildpunkte je Zoll, Faktor 2 → 132 Punkte je Zoll
+const jn = (b) => b ? '<span class="ok">ja</span>' : '<span class="nein">nein</span>';
+function zeig(id, html) { $(id).innerHTML = html; ausgabe(); }
+function ausgabe() { E.fassung = FASSUNG; E.zeit = new Date().toISOString(); $("aus").value = JSON.stringify(E, null, 1); }
+function fehler(e) { return (e && (e.name + ": " + e.message)) || String(e); }
+$("kopfstand").textContent = FASSUNG;
+
+// ---------------------------------------------------------------- 1 Gerät
+(async function geraet() {
+  const g = E.geraet = {};
+  g.ua = navigator.userAgent;
+  g.als_app = (navigator.standalone === true) || matchMedia("(display-mode: standalone)").matches;
+  g.dpr = window.devicePixelRatio;
+  g.schirm = screen.width + "×" + screen.height;
+  g.fenster = innerWidth + "×" + innerHeight;
+  g.verschluesselt = window.isSecureContext;
+  g.dienst = "serviceWorker" in navigator;
+  g.zusammengefasste_ereignisse = typeof PointerEvent !== "undefined" && "getCoalescedEvents" in PointerEvent.prototype;
+  g.vorhergesagte_ereignisse = typeof PointerEvent !== "undefined" && "getPredictedEvents" in PointerEvent.prototype;
+  g.zwischenablage_lesen = !!(navigator.clipboard && navigator.clipboard.read);
+  g.zwischenablage_schreiben = !!(navigator.clipboard && navigator.clipboard.write);
+  g.teilen = !!navigator.share;
+  try { g.teilen_dateien = !!(navigator.canShare && navigator.canShare({ files: [new File(["x"], "x.txt", { type: "text/plain" })] })); } catch (e) { g.teilen_dateien = false; }
+  g.finger_punkte = navigator.maxTouchPoints;
+  // größte Zeichenfläche
+  g.flaeche = {};
+  for (const [w, h] of [[4096, 4096], [4961, 3508], [8192, 8192]]) {
+    try { const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d"); x.fillStyle = "#f00"; x.fillRect(w - 2, h - 2, 2, 2);
+          g.flaeche[w + "×" + h] = x.getImageData(w - 1, h - 1, 1, 1).data[0] === 255; c.width = c.height = 1; } catch (e) { g.flaeche[w + "×" + h] = false; }
+  }
+  try { const s = await navigator.storage.estimate(); g.speicher_frei_MB = Math.round((s.quota - s.usage) / 1048576); g.speicher_belegt_MB = Math.round(s.usage / 1048576); } catch (e) { g.speicher = fehler(e); }
+  try { g.speicher_dauerhaft = await navigator.storage.persisted(); } catch (e) { g.speicher_dauerhaft = fehler(e); }
+  if (g.dienst && g.verschluesselt) { try { await navigator.serviceWorker.register("sw.js"); g.dienst_angemeldet = true; } catch (e) { g.dienst_angemeldet = fehler(e); } }
+  zeig("e1", "als App vom Home-Bildschirm: " + jn(g.als_app) + " · verschlüsselt: " + jn(g.verschluesselt) + " · Schirm " + g.schirm + " ×" + g.dpr +
+    "\nZwischenablage lesen/schreiben: " + jn(g.zwischenablage_lesen) + "/" + jn(g.zwischenablage_schreiben) + " · Teilen mit Datei: " + jn(g.teilen_dateien) +
+    "\nZeichenfläche 4096²: " + jn(g.flaeche["4096×4096"]) + " · A3 300 dpi: " + jn(g.flaeche["4961×3508"]) + " · 8192²: " + jn(g.flaeche["8192×8192"]) +
+    "\nSpeicher frei: " + g.speicher_frei_MB + " MB · dauerhaft: " + g.speicher_dauerhaft + " · Start ohne Netz vorbereitet: " + (g.dienst_angemeldet === true ? "ja" : g.dienst_angemeldet) +
+    "\n" + g.ua);
+  $("e9").textContent = g.als_app ? "Die App läuft vom Home-Bildschirm. Jetzt Flugmodus, schließen, wieder öffnen." : "Diese Karte gilt nur für die App vom Home-Bildschirm (Safari → Teilen → Zum Home-Bildschirm).";
+})();
+
+// ---------------------------------------------------------------- 2 Stift
+const c2 = $("c2"), x2 = c2.getContext("2d");
+let striche = [];                                // für Karte 7: bleibt die Zeichnung erhalten?
+const stift = E.stift = { stift_erkannt: false, druck_min: null, druck_max: null, neigung: false, ereignisse: 0, zusammengefasst: 0, je_sekunde: 0, finger_gezeichnet: 0 };
+function passe(c) { const r = c.getBoundingClientRect(), d = devicePixelRatio || 1; c.width = Math.round(r.width * d); c.height = Math.round(parseFloat(c.getAttribute("height")) * d); c.style.height = c.getAttribute("height") + "px"; return d; }
+let d2 = passe(c2);
+function mal2() { x2.setTransform(1, 0, 0, 1, 0, 0); x2.clearRect(0, 0, c2.width, c2.height); x2.lineCap = "round"; x2.strokeStyle = "#111";
+  for (const s of striche) for (let i = 1; i < s.length; i++) { x2.lineWidth = d2 * 3 * (0.35 + 1.3 * (s[i - 1][2] + s[i][2]) / 2); x2.beginPath(); x2.moveTo(s[i - 1][0] * d2, s[i - 1][1] * d2); x2.lineTo(s[i][0] * d2, s[i][1] * d2); x2.stroke(); } }
+let akt = null, t0 = 0, zeitsumme = 0;
+function punkt(e) { const r = c2.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top, e.pointerType === "pen" ? (e.pressure || 0.5) : 0.5]; }
+c2.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "pen") stift.stift_erkannt = true;
+  if (e.pointerType === "touch" && stift.stift_erkannt) { stift.finger_abgewiesen = (stift.finger_abgewiesen || 0) + 1; return; }
+  if (e.pointerType === "touch") stift.finger_gezeichnet++;
+  e.preventDefault(); try { c2.setPointerCapture(e.pointerId); } catch (f) {} akt = [punkt(e)]; striche.push(akt); t0 = performance.now();
+});
+c2.addEventListener("pointermove", (e) => {
+  if (!akt) return; e.preventDefault();
+  const ev = (e.getCoalescedEvents && e.getCoalescedEvents()) || [e];
+  stift.ereignisse++; stift.zusammengefasst += Math.max(ev.length, 1);
+  for (const v of (ev.length ? ev : [e])) {
+    const p = punkt(v); akt.push(p);
+    if (v.pointerType === "pen") { stift.druck_min = stift.druck_min === null ? p[2] : Math.min(stift.druck_min, p[2]); stift.druck_max = stift.druck_max === null ? p[2] : Math.max(stift.druck_max, p[2]);
+      if ((v.tiltX || v.tiltY) || (typeof v.altitudeAngle === "number" && v.altitudeAngle < 1.5)) stift.neigung = true; }
+  }
+  mal2();
+});
+function ende2(e) { if (!akt) return; zeitsumme += performance.now() - t0; akt = null; stift.je_sekunde = Math.round(stift.zusammengefasst / (zeitsumme / 1000));
+  stift.druck_min = stift.druck_min === null ? null : Math.round(stift.druck_min * 100) / 100; stift.druck_max = stift.druck_max === null ? null : Math.round(stift.druck_max * 100) / 100;
+  zeig("e2", "Stift erkannt: " + jn(stift.stift_erkannt) + " · Andruck von " + stift.druck_min + " bis " + stift.druck_max + " · Neigung: " + jn(stift.neigung) +
+    "\nPunkte je Sekunde: " + stift.je_sekunde + " (Ereignisse " + stift.ereignisse + ", darin Punkte " + stift.zusammengefasst + ")" +
+    "\nFinger abgewiesen, seit der Stift erkannt ist: " + (stift.finger_abgewiesen || 0) + " · Striche: " + striche.length);
+  merke(); }
+c2.addEventListener("pointerup", ende2); c2.addEventListener("pointercancel", ende2);
+$("b2").onclick = () => { striche = []; mal2(); merke(); };
+
+// ---------------------------------------------------------------- 3 Zoom und großes Bild
+const c3 = $("c3"), x3 = c3.getContext("2d"); let d3 = passe(c3), bild3 = null, ans = { z: 0.1, x: 0, y: 0 };
+function mal3() { if (!bild3) return 0; const t = performance.now(); x3.setTransform(1, 0, 0, 1, 0, 0); x3.fillStyle = "#fff"; x3.fillRect(0, 0, c3.width, c3.height);
+  const z = ans.z * d3; x3.imageSmoothingEnabled = ans.z < 2;
+  x3.drawImage(bild3, ans.x, ans.y, c3.width / z, c3.height / z, 0, 0, c3.width, c3.height);
+  // feine Linien als Vektor darüber: bleiben bei jeder Vergrößerung scharf
+  x3.strokeStyle = "#C0392B"; x3.lineWidth = Math.max(1, d3); x3.beginPath();
+  for (let i = 0; i < 12; i++) { const bx = 2393 + i, by = 1717.5; x3.moveTo((bx - ans.x) * z, (by - ans.y) * z); x3.lineTo((bx + 1.5 - ans.x) * z, (by + 5 - ans.y) * z); } x3.stroke();
+  x3.getImageData(0, 0, 1, 1); $("z3").textContent = "  Zoom " + Math.round(ans.z * 100) + " %"; return performance.now() - t; }
+$("b3").onclick = async () => {
+  const m = E.zoom = {}; zeig("e3", "lädt …");
+  try { const te = performance.now(); const adr = URL.createObjectURL(testbild(4961, 3508)); m.erzeugen_ms = Math.round(performance.now() - te);
+    const t = performance.now(); const img = new Image(); img.src = adr; await img.decode(); m.bild = img.naturalWidth + "×" + img.naturalHeight; m.laden_ms = Math.round(performance.now() - t);
+    try { const t2 = performance.now(); bild3 = await createImageBitmap(img); m.bitmap_ms = Math.round(performance.now() - t2); } catch (e) { bild3 = img; m.bitmap = fehler(e); }
+  } catch (e) { m.fehler = fehler(e); zeig("e3", '<span class="nein">Bild lädt nicht: ' + m.fehler + "</span>"); return; }
+  m.zeichnen_ms = {};
+  for (const z of [0.05, 0.25, 1, 4, 16, 64]) { ans = { z, x: 2400 - c3.width / (2 * z * d3), y: 1720 - c3.height / (2 * z * d3) }; let s = 0, n = 20; for (let i = 0; i < n; i++) { ans.x += 0.5; s += mal3(); await new Promise(requestAnimationFrame); }
+    m.zeichnen_ms[Math.round(z * 100) + " %"] = Math.round(s / n * 10) / 10; }
+  zeig("e3", "Bild " + m.bild + " erzeugt in " + m.erzeugen_ms + " ms, geladen in " + m.laden_ms + " ms" + (m.bitmap_ms !== undefined ? ", aufbereitet in " + m.bitmap_ms + " ms" : "") +
+    "\nZeichnen je Bild (ms): " + Object.entries(m.zeichnen_ms).map(([k, v]) => k + ": " + v).join(" · ") + "\nUnter 16 ms ist flüssig. Jetzt selbst zoomen und schieben.");
+};
+// Testbild als echtes Rasterbild (Graustufen-PNG ohne Verdichtung), in der Seite selbst erzeugt – so braucht die Probeseite keine Bilddatei.
+function testbild(w, h) {
+  const zl = w + 1, roh = new Uint8Array(zl * h).fill(255), mm = 300 / 25.4;
+  const setze = (x, y, v) => { if (x >= 0 && x < w && y >= 0 && y < h) roh[y * zl + 1 + x] = v; };
+  for (let i = 0; i * mm < w; i++) { const x = Math.round(i * mm), v = i % 10 ? 214 : 150; for (let y = 0; y < h; y++) roh[y * zl + 1 + x] = v; }
+  for (let j = 0; j * mm < h; j++) { const y = Math.round(j * mm); roh.fill(j % 10 ? 214 : 150, y * zl + 1, y * zl + 1 + w); }
+  for (let y = 1600; y < 1840; y++) roh.fill(255, y * zl + 1 + 2250, y * zl + 1 + 2760);          // helles Feld für die Proben
+  let y0 = 1620; for (const b of [1, 2, 3, 4, 6, 8]) { for (let k = 0; k < b; k++) roh.fill(0, (y0 + k) * zl + 1 + 2270, (y0 + k) * zl + 1 + 2740); y0 += b + 10; }   // Linien 1 bis 8 Punkte
+  for (let y = 0; y < 100; y++) for (let x = 0; x < 100; x++) setze(2270 + x, 1720 + y, (x + y) % 2 ? 0 : 255);                                                  // Schachbrett 1 Punkt
+  for (let d = 0; d < 300; d += 6) for (let k = 0; k < 100; k++) setze(2400 + d + k, 1720 + k, 60);                                                             // Schraffur 45°
+  for (let y = 0; y < h; y++) roh[y * zl] = 0;                                                                                                                  // Filterbyte je Zeile
+  const crcT = new Uint32Array(256).map((_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
+  const crc = (a) => { let c = 0xFFFFFFFF; for (let i = 0; i < a.length; i++) c = crcT[(c ^ a[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  const teil = (art, d) => { const a = new Uint8Array(12 + d.length), v = new DataView(a.buffer); v.setUint32(0, d.length); a.set([...art].map((c) => c.charCodeAt(0)), 4); a.set(d, 8); v.setUint32(8 + d.length, crc(a.subarray(4, 8 + d.length))); return a; };
+  const kopf = new Uint8Array(13), kv = new DataView(kopf.buffer); kv.setUint32(0, w); kv.setUint32(4, h); kopf[8] = 8;                                          // 8 Bit, Graustufen
+  const bl = Math.ceil(roh.length / 65535), z = new Uint8Array(2 + roh.length + bl * 5 + 4); z[0] = 0x78; z[1] = 0x01; let p = 2, s1 = 1, s2 = 0;
+  for (let i = 0; i < roh.length; i += 65535) { const n = Math.min(65535, roh.length - i); z[p++] = i + n >= roh.length ? 1 : 0; z[p++] = n & 255; z[p++] = n >>> 8; z[p++] = ~n & 255; z[p++] = (~n >>> 8) & 255; z.set(roh.subarray(i, i + n), p); p += n; }
+  for (let i = 0; i < roh.length;) { const e = Math.min(i + 5552, roh.length); for (; i < e; i++) { s1 += roh[i]; s2 += s1; } s1 %= 65521; s2 %= 65521; }
+  new DataView(z.buffer).setUint32(p, ((s2 << 16) | s1) >>> 0);
+  return new Blob([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]), teil("IHDR", kopf), teil("IDAT", z), teil("IEND", new Uint8Array(0))], { type: "image/png" });
+}
+const finger = new Map(); let start3 = null;
+c3.addEventListener("pointerdown", (e) => { e.preventDefault(); try { c3.setPointerCapture(e.pointerId); } catch (f) {} finger.set(e.pointerId, [e.clientX, e.clientY]); start3 = null; });
+c3.addEventListener("pointermove", (e) => { if (!finger.has(e.pointerId) || !bild3) return; e.preventDefault(); const alt = finger.get(e.pointerId); const neu = [e.clientX, e.clientY];
+  if (finger.size === 1) { ans.x -= (neu[0] - alt[0]) / ans.z; ans.y -= (neu[1] - alt[1]) / ans.z; finger.set(e.pointerId, neu); }
+  else if (finger.size === 2) { finger.set(e.pointerId, neu); const p = [...finger.values()]; const ab = Math.hypot(p[0][0] - p[1][0], p[0][1] - p[1][1]); const r = c3.getBoundingClientRect(); const mx = (p[0][0] + p[1][0]) / 2 - r.left, my = (p[0][1] + p[1][1]) / 2 - r.top;
+    if (!start3) start3 = { ab, z: ans.z, bx: ans.x + mx / ans.z, by: ans.y + my / ans.z };
+    ans.z = Math.min(64, Math.max(0.05, start3.z * ab / start3.ab)); ans.x = start3.bx - mx / ans.z; ans.y = start3.by - my / ans.z; }
+  mal3(); });
+const los3 = (e) => { finger.delete(e.pointerId); start3 = null; }; c3.addEventListener("pointerup", los3); c3.addEventListener("pointercancel", los3);
+
+// ---------------------------------------------------------------- 4 Viele Striche
+$("b4").onclick = async () => {
+  const m = E.striche = {}; zeig("e4", "misst …"); await new Promise(requestAnimationFrame);
+  const c = document.createElement("canvas"); c.width = Math.round((innerWidth || 1366) * devicePixelRatio); c.height = Math.round((innerHeight || 1024) * devicePixelRatio); const x = c.getContext("2d"); m.flaeche = c.width + "×" + c.height;
+  let a = 7; const r = () => { a = (a * 1664525 + 1013904223) % 4294967296; return a / 4294967296; };
+  for (const n of [1000, 5000]) { const S = []; for (let i = 0; i < n; i++) { let px = r() * c.width, py = r() * c.height; const P = []; for (let k = 0; k < 120; k++) { px += (r() - .5) * 14; py += (r() - .5) * 14; P.push([px, py, 0.3 + r() * 0.6]); } S.push(P); }
+    const t = performance.now(); x.clearRect(0, 0, c.width, c.height); x.lineCap = "round";
+    for (const p of S) for (let i = 1; i < p.length; i++) { x.lineWidth = 2 * (0.35 + 1.3 * (p[i - 1][2] + p[i][2]) / 2); x.beginPath(); x.moveTo(p[i - 1][0], p[i - 1][1]); x.lineTo(p[i][0], p[i][1]); x.stroke(); }
+    x.getImageData(0, 0, 1, 1); m[n + "_striche_ms"] = Math.round(performance.now() - t); const tj = performance.now(); m[n + "_text_MB"] = Math.round(JSON.stringify(S).length / 1048576 * 10) / 10; m[n + "_text_ms"] = Math.round(performance.now() - tj);
+    await new Promise(requestAnimationFrame); }
+  zeig("e4", "Fläche " + m.flaeche + "\n1 000 Striche neu zeichnen: " + m["1000_striche_ms"] + " ms · 5 000 Striche: " + m["5000_striche_ms"] + " ms\nZum Vergleich am Laptop: 135 ms und 660 ms.");
+};
+
+// ---------------------------------------------------------------- 5 Zwischenablage
+$("b5a").onclick = async () => { const m = E.zwischenablage = E.zwischenablage || {}; m.text = {};
+  for (const kb of [1, 100, 1000]) { try { await navigator.clipboard.writeText("S".repeat(kb * 1024)); m.text[kb + "_KB"] = true; } catch (e) { m.text[kb + "_KB"] = fehler(e); } }
+  zeig("e5", "Text kopieren – 1 KB: " + m.text["1_KB"] + " · 100 KB: " + m.text["100_KB"] + " · 1 MB: " + m.text["1000_KB"]); };
+$("b5b").onclick = async () => { const m = E.zwischenablage = E.zwischenablage || {}; const b = m.bild = {};
+  try { const t = performance.now(); const teile = await navigator.clipboard.read(); b.warten_ms = Math.round(performance.now() - t); b.arten = teile.map((i) => i.types.join(",")).join(" | ");
+    const mit = teile.find((i) => i.types.some((y) => y.startsWith("image/"))); if (!mit) { b.gefunden = false; zeig("e5", '<span class="nein">Kein Bild in der Zwischenablage.</span> Gefunden: ' + b.arten); return; }
+    const art = mit.types.find((y) => y.startsWith("image/")); const blob = await mit.getType(art); const bm = await createImageBitmap(blob);
+    b.gefunden = true; b.art = art; b.groesse = bm.width + "×" + bm.height; b.MB = Math.round(blob.size / 1048576 * 100) / 100;
+    const c = $("c5"), d = passe(c), x = c.getContext("2d"); const k = Math.min(c.width / bm.width, c.height / bm.height); x.clearRect(0, 0, c.width, c.height); x.drawImage(bm, 0, 0, bm.width * k, bm.height * k);
+    // verkleinern wie für die Rückgabe: lange Kante 1600
+    const kl = Math.min(1, 1600 / Math.max(bm.width, bm.height)); const v = document.createElement("canvas"); v.width = Math.round(bm.width * kl); v.height = Math.round(bm.height * kl); v.getContext("2d").drawImage(bm, 0, 0, v.width, v.height);
+    const jpg = await new Promise((r) => v.toBlob(r, "image/jpeg", 0.8)); b.verkleinert = v.width + "×" + v.height; b.verkleinert_KB = Math.round(jpg.size / 1024);
+    zeig("e5", "Bild eingefügt: " + jn(true) + " · " + b.groesse + " · " + b.MB + " MB (" + b.art + ")\nverkleinert für die Rückgabe: " + b.verkleinert + " · " + b.verkleinert_KB + " KB");
+  } catch (e) { b.fehler = fehler(e); zeig("e5", '<span class="nein">Einfügen ging nicht: ' + b.fehler + "</span>"); } };
+
+// ---------------------------------------------------------------- 6 Kurzbefehl
+async function kurz(art, kb) { const m = E.kurzbefehl = E.kurzbefehl || {}; const name = encodeURIComponent("Skizze Test"); let adr;
+  try { if (art === "text") adr = "shortcuts://run-shortcut?name=" + name + "&input=text&text=" + encodeURIComponent("Hallo von Skizze, " + new Date().toLocaleTimeString());
+    else { await navigator.clipboard.writeText("K".repeat(kb * 1024 - 20) + " Ende " + kb + " KB"); adr = "shortcuts://run-shortcut?name=" + name + "&input=clipboard"; }
+    m[art + (kb || "")] = "aufgerufen " + new Date().toLocaleTimeString(); zeig("e6", "Aufgerufen: " + adr.slice(0, 80) + "\nKomm danach zurück und beantworte die zwei Fragen."); location.href = adr;
+  } catch (e) { m[art + (kb || "")] = fehler(e); zeig("e6", '<span class="nein">Ging nicht: ' + fehler(e) + "</span>"); } }
+$("b6a").onclick = () => kurz("text"); $("b6b").onclick = () => kurz("zwischenablage", 100); $("b6c").onclick = () => kurz("zwischenablage", 1000);
+
+// ---------------------------------------------------------------- 7 Speicher und App-Wechsel
+function db() { return new Promise((ok, nein) => { const r = indexedDB.open("skizze_stufe0", 1); r.onupgradeneeded = () => r.result.createObjectStore("k"); r.onsuccess = () => ok(r.result); r.onerror = () => nein(r.error); }); }
+async function lege(k, v) { const d = await db(); return new Promise((ok, nein) => { const t = d.transaction("k", "readwrite"); t.objectStore("k").put(v, k); t.oncomplete = ok; t.onerror = () => nein(t.error); }); }
+async function hole(k) { const d = await db(); return new Promise((ok, nein) => { const r = d.transaction("k").objectStore("k").get(k); r.onsuccess = () => ok(r.result); r.onerror = () => nein(r.error); }); }
+async function merke() { try { await lege("striche", striche); await lege("zeit", Date.now()); } catch (e) { E.speicher = E.speicher || {}; E.speicher.fehler = fehler(e); } ausgabe(); }
+const sp = E.speicher = { geladen: 0, wechsel: 0 };
+(async function start7() { try { const n = (await hole("geladen")) || 0; sp.geladen = n + 1; await lege("geladen", sp.geladen); const alt = await hole("striche"); const zeit = await hole("zeit");
+    if (alt && alt.length) { striche = alt; mal2(); sp.zeichnung_wieder_da = alt.length + " Striche"; } sp.letzter_stand_vor_s = zeit ? Math.round((Date.now() - zeit) / 1000) : null; sp.wechsel = (await hole("wechsel")) || 0;
+  } catch (e) { sp.fehler = fehler(e); } zeig7(); })();
+function zeig7() { zeig("e7", "Seite geladen: " + sp.geladen + "-mal · App-Wechsel gezählt: " + sp.wechsel + " · Zeichnung nach dem Laden wieder da: " + (sp.zeichnung_wieder_da || "–") +
+  (sp.letzter_stand_vor_s !== null && sp.letzter_stand_vor_s !== undefined ? " · letzter Stand vor " + sp.letzter_stand_vor_s + " s" : "") + (sp.probe_MB ? "\n20 MB Speicherprobe: " + sp.probe_MB : "") + (sp.dauerhaft !== undefined ? " · dauerhaft zugesagt: " + sp.dauerhaft : "")); }
+document.addEventListener("visibilitychange", async () => { if (document.hidden) { sp.wechsel++; try { await lege("wechsel", sp.wechsel); await merke(); } catch (e) {} } else zeig7(); });
+$("b7").onclick = async () => { try { const t = performance.now(); await lege("probe", new Blob([new Uint8Array(20 * 1048576)])); const b = await hole("probe"); sp.probe_MB = (b && b.size === 20 * 1048576 ? "geschrieben und gelesen in " : "FEHLER nach ") + Math.round(performance.now() - t) + " ms"; await lege("probe", null);
+    try { sp.dauerhaft = await navigator.storage.persist(); } catch (e) { sp.dauerhaft = fehler(e); } } catch (e) { sp.probe_MB = fehler(e); } zeig7(); };
+
+// ---------------------------------------------------------------- 8 Kleine Felder
+const WERKZEUGE = [["Stift", '<path d="M5 17 L15 7 L17.5 9.5 L7.5 19.5 L4.5 20 z"/>'], ["Bleistift", '<path d="M5 17 L16 6" stroke="#6B7280"/><path d="M4.5 19.5 L5 17 L7 19 z"/>'], ["Marker", '<path d="M5 16 L17 8" stroke-width="4.5" stroke="#B8C0CC"/>'],
+  ["Radierer", '<path d="M6 15 L13 8 L18 13 L11 20 z M9.5 11.5 L14.5 16.5"/>'], ["Lineal", '<path d="M3 9 h17 v6 h-17 z M6 9 v2.5 M9 9 v3.5 M12 9 v2.5 M15 9 v3.5 M18 9 v2.5"/>'], ["Notiz", '<path d="M5 5 h12 v9 l-4 4 h-8 z M17 14 h-4 v4"/>'],
+  ["Einfügen", '<path d="M4 6 h14 v12 h-14 z" stroke-dasharray="2.2 1.8"/><path d="M11 9 v6 M8 12 h6"/>'], ["Ebenen", '<path d="M11 5 L19 9 L11 13 L3 9 z M3 12.5 L11 16.5 L19 12.5 M3 16 L11 20 L19 16"/>'], ["Raster", '<path d="M4 4 h15 v15 h-15 z M9 4 v15 M14 4 v15 M4 9 h15 M4 14 h15"/>'], ["Zurück", '<path d="M4 12 h13 M12 7 l5 5 l-5 5"/>']];
+const feld = E.felder = {}; let lauf = null;
+for (const mm of [7, 6, 5]) { const px = Math.round(mm * PX_MM); const l = document.createElement("div"); l.className = "leiste"; l.dataset.mm = mm;
+  l.innerHTML = '<div style="font:11px Consolas,monospace;color:#4B5563;text-align:center">' + mm + " mm</div>" + WERKZEUGE.map(([n, p], i) => '<button data-i="' + i + '" style="width:' + (px + 12) + "px;height:" + px + 'px"><svg width="' + Math.round(px * 0.55) + '" height="' + Math.round(px * 0.55) + '" viewBox="0 0 22 22" fill="none" stroke="#1B2A41" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">' + p + "</svg><span>" + n + "</span></button>").join("");
+  l.addEventListener("pointerdown", (e) => { e.preventDefault(); const b = e.target.closest("button"); const m = l.dataset.mm;
+    if (!lauf || lauf.mm !== m) { lauf = { mm: m, n: 0, treffer: 0, daneben: 0, t: performance.now(), ziel: Math.floor(Math.random() * WERKZEUGE.length), art: e.pointerType }; naechstes(l); return; }
+    if (b && +b.dataset.i === lauf.ziel) lauf.treffer++; else lauf.daneben++; lauf.n++;
+    if (lauf.n >= 12) { feld[m + "_mm"] = { treffer: lauf.treffer, daneben: lauf.daneben, sekunden: Math.round((performance.now() - lauf.t) / 100) / 10, mit: lauf.art }; l.querySelectorAll("button").forEach((x) => x.classList.remove("ziel")); lauf = null;
+      $("e8a").textContent = "Fertig. Nächste Leiste antippen oder unten antworten."; zeig("e8", Object.entries(feld).map(([k, v]) => k.replace("_", " ") + ": " + v.treffer + " Treffer, " + v.daneben + " daneben, " + v.sekunden + " s (" + v.mit + ")").join("\n")); return; }
+    let z; do { z = Math.floor(Math.random() * WERKZEUGE.length); } while (z === lauf.ziel); lauf.ziel = z; naechstes(l); });
+  $("leisten").appendChild(l); }
+function naechstes(l) { $("e8a").innerHTML = "Leiste " + lauf.mm + " mm – tippe: <b>" + WERKZEUGE[lauf.ziel][0] + "</b>  (" + (lauf.n + 1) + " von 12)"; }
+
+// ---------------------------------------------------------------- Fragen, Ergebnis
+E.antworten = {};
+document.querySelectorAll(".frage").forEach((f) => f.querySelectorAll("button").forEach((b) => b.onclick = () => { f.querySelectorAll("button").forEach((x) => x.classList.remove("gew")); b.classList.add("gew"); E.antworten[f.dataset.f] = b.textContent; ausgabe(); }));
+$("bk").onclick = async () => { ausgabe(); try { await navigator.clipboard.writeText($("aus").value); $("ek").textContent = " kopiert"; } catch (e) { $("ek").textContent = " ging nicht: " + fehler(e); } };
+$("bt").onclick = async () => { ausgabe(); try { await navigator.share({ title: "Skizze Gerätetest", text: $("aus").value }); } catch (e) { $("ek").textContent = " " + fehler(e); } };
+addEventListener("resize", () => { d2 = passe(c2); mal2(); d3 = passe(c3); mal3(); });
+ausgabe();
+</script>
+</body>
+</html>
